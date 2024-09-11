@@ -1,14 +1,39 @@
-import { Module } from '@nestjs/common';
+import { Logger, Module, OnModuleInit } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
 import { MedicamentoModule } from './medicamento/medicamento.module';
 import { AgendaModule } from './agenda/agenda.module';
+import { User } from './users/entity/user.entity'; // Asegúrate de tener la entidad User importada aquí
 
 @Module({
-  imports: [UsersModule, AuthModule, MedicamentoModule, AgendaModule],
+  imports: [
+    ConfigModule.forRoot(), // Carga las variables de entorno desde el archivo .env
+    TypeOrmModule.forRoot({
+      type: 'postgres',
+      host: process.env.DB_HOST,
+      port: +process.env.DB_PORT,
+      username: process.env.DB_USER,
+      password: process.env.DB_PASSWORD,
+      database: process.env.DB_NAME,
+      entities: [User], // Asegúrate de incluir todas tus entidades aquí
+      synchronize: true, // Solo en desarrollo
+    }),
+    UsersModule,
+    AuthModule,
+    MedicamentoModule,
+    AgendaModule,
+  ],
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule implements OnModuleInit {
+  private readonly logger = new Logger(AppModule.name);
+
+  async onModuleInit() {
+    this.logger.log('Conexión de base de datos exitosa');
+  }
+}
