@@ -7,7 +7,8 @@ import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
 import { MedicamentoModule } from './medicamento/medicamento.module';
 import { AgendaModule } from './agenda/agenda.module';
-import { User } from './users/entity/user.entity'; // Asegúrate de tener la entidad User importada aquí
+import { User } from './users/entity/user.entity';
+import { Auth } from './auth/entity/auth.entity'; // Asegúrate de tener la entidad User importada aquí
 
 @Module({
   imports: [
@@ -19,7 +20,7 @@ import { User } from './users/entity/user.entity'; // Asegúrate de tener la ent
       username: process.env.DB_USER,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
-      entities: [User], // Asegúrate de incluir todas tus entidades aquí
+      entities: [User, Auth ], // Asegúrate de incluir todas tus entidades aquí
       synchronize: true, // Solo en desarrollo
     }),
     UsersModule,

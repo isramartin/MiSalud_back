@@ -1,25 +1,28 @@
 import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
 
-@Entity('usuarios') // Asegúrate de que el nombre de la tabla coincida
+@Entity('usuarios')
 export class User {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ type: 'varchar', length: 100 })
+  @Column()
   nombre: string;
 
-  @Column({ type: 'varchar', length: 100 })
+  @Column()
   apellido: string;
 
-  @Column({ type: 'date' })
+  @Column()
   fechaN: Date;
 
-  @Column({ type: 'char', length: 1 })
+  @Column()
   sexo: string;
 
-  @Column({ type: 'varchar', length: 255 })
+  @Column({ unique: true })
+  email: string;
+
+  @Column()
   contraseña: string;
 
-  @Column({ type: 'varchar', length: 255 })
-  confirmarC: string;
+  @Column({ nullable: true })
+  confirmarC?: string;
 }
