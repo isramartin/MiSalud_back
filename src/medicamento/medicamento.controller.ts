@@ -1,4 +1,59 @@
-import { Controller } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Put, Delete, NotFoundException, BadRequestException } from '@nestjs/common';
+import { MedicamentoService } from './medicamento.service';
+import { CreateMedicamentoDto } from './dto/medicamento.dto';
+import { UpdateMedicamentoDto } from './dto/updateMediacamneto.dto';
 
-@Controller('medicamento')
-export class MedicamentoController {}
+@Controller('medicamentos')
+export class MedicamentoController {
+  constructor(private readonly medicamentoService: MedicamentoService) {}
+
+  @Post()
+  async crearMedicamento(@Body() medicamentodto: CreateMedicamentoDto) {
+    return this.medicamentoService.crearMedicamento(medicamentodto);
+  }
+
+  @Get()
+  async findAllMedicamentos() {
+    return this.medicamentoService.obtenerMedicamentos();
+  }
+
+  @Get('empaque')
+  async findOneMedicamentoSimplePorId(@Param('id') id: number) {
+    try {
+      return await this.medicamentoService.obtenerMedicamentoSimplePorId(id);
+    } catch (error) {
+      throw new NotFoundException(`Medicamento con ID ${id} no encontrado`);
+    }
+  }
+  
+  @Get(':id')
+  async findOneMedicamentoPorId(@Param('id') id: number) {
+    return this.medicamentoService.obtenerMedicamentoPorId(id);
+  }
+
+  @Put('update')
+  async actualizarMedicamento(@Param('id') id: number, @Body() medicamentoData: UpdateMedicamentoDto) {
+    try {
+      return await this.medicamentoService.actualizarMedicamento(id, medicamentoData);
+    } catch (error) {
+      throw new NotFoundException(`Medicamento con ID ${id} no encontrado`);
+    }
+  }
+
+  @Delete('delete')
+  async delete(@Param('id') id: number) {
+    if (!id) {
+      throw new BadRequestException('ID del medicamento no proporcionado');
+    }
+    if (isNaN(id)) {
+      throw new BadRequestException('ID debe ser un número válido');
+    }
+
+    try {
+      await this.medicamentoService.eliminarMedicamento(id);
+      return { message: 'Medicamento eliminado correctamente' };
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
+  }
+}

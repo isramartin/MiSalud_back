@@ -12,6 +12,8 @@ import { User } from './users/entity/user.entity';
 import { Auth } from './auth/entity/auth.entity';
 import { Agenda } from './agenda/entity/agenda.entity'; 
 import { Cita } from './cita/entity/cita.entity';
+import { Medicamento } from './medicamento/entity/medicamentos.entity';
+import { Dosis } from './medicamento/entity/dosis.entity';
 // Incluye la entidad aquí
 
 @Module({
@@ -24,7 +26,7 @@ import { Cita } from './cita/entity/cita.entity';
       username: process.env.DB_USER,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
-      entities: [User, Auth, Agenda, Cita], // Incluye todas tus entidades aquí
+      entities: [User, Auth, Agenda, Cita, Medicamento, Dosis], // Incluye todas tus entidades aquí
       synchronize: true, // Solo en desarrollo
     }),
     UsersModule,
