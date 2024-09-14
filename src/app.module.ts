@@ -7,9 +7,12 @@ import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
 import { MedicamentoModule } from './medicamento/medicamento.module';
 import { AgendaModule } from './agenda/agenda.module';
+import { CitaModule } from './cita/cita.module';
 import { User } from './users/entity/user.entity';
 import { Auth } from './auth/entity/auth.entity';
-import { Agenda } from './agenda/entity/agenda.entity'; // Incluye la entidad Agenda aquí
+import { Agenda } from './agenda/entity/agenda.entity'; 
+import { Cita } from './cita/entity/cita.entity';
+// Incluye la entidad aquí
 
 @Module({
   imports: [
@@ -21,13 +24,14 @@ import { Agenda } from './agenda/entity/agenda.entity'; // Incluye la entidad Ag
       username: process.env.DB_USER,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
-      entities: [User, Auth, Agenda], // Incluye todas tus entidades aquí
+      entities: [User, Auth, Agenda, Cita], // Incluye todas tus entidades aquí
       synchronize: true, // Solo en desarrollo
     }),
     UsersModule,
     AuthModule,
     MedicamentoModule,
     AgendaModule,
+    CitaModule,
   ],
   controllers: [AppController],
   providers: [AppService],
