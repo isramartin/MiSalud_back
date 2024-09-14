@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param, Put, Delete, NotFoundException, BadRequestException } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Put, Delete, NotFoundException, BadRequestException, Query } from '@nestjs/common';
 import { MedicamentoService } from './medicamento.service';
 import { CreateMedicamentoDto } from './dto/medicamento.dto';
 import { UpdateMedicamentoDto } from './dto/updateMediacamneto.dto';
@@ -26,7 +26,7 @@ export class MedicamentoController {
     }
   }
   
-  @Get(':id')
+  @Get('dosis')
   async findOneMedicamentoPorId(@Param('id') id: number) {
     return this.medicamentoService.obtenerMedicamentoPorId(id);
   }
@@ -41,7 +41,7 @@ export class MedicamentoController {
   }
 
   @Delete('delete')
-  async delete(@Param('id') id: number) {
+  async delete(@Query('id') id: number) {
     if (!id) {
       throw new BadRequestException('ID del medicamento no proporcionado');
     }
