@@ -147,7 +147,8 @@ export class MedicamentoService {
   
     // Comprobar si unidades_restantes es menor o igual a unidades_min
     if (medicamento.unidades_restantes <= medicamento.unidades_min) {
-      // Aquí podrías agregar la lógica de notificación si es necesario
+        console.log(`ALERTA: Las unidades restantes (${medicamento.unidades_restantes}) son menores o iguales al mínimo (${medicamento.unidades_min}).`);
+      // Aqui se agrega enviar notificacion
     }
   
     // Guardar los cambios en la base de datos
