@@ -18,7 +18,7 @@ export class MedicamentoController {
   }
 
   @Get('empaque')
-  async findOneMedicamentoSimplePorId(@Param('id') id: number) {
+  async findOneMedicamentoSimplePorId(@Query('id') id: number) {
     try {
       return await this.medicamentoService.obtenerMedicamentoSimplePorId(id);
     } catch (error) {
@@ -27,7 +27,7 @@ export class MedicamentoController {
   }
   
   @Get('dosis')
-  async findOneMedicamentoPorId(@Param('id') id: number) {
+  async findOneMedicamentoPorId(@Query('id') id: number) {
     return this.medicamentoService.obtenerMedicamentoPorId(id);
   }
 
