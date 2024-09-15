@@ -1,4 +1,4 @@
-import { IsString, IsInt, IsOptional, IsArray, ValidateNested } from 'class-validator';
+import { IsString, IsInt, IsOptional, IsArray, ValidateNested, Min } from 'class-validator';
 import { Type } from 'class-transformer';
 import { CreateDosisDto } from './dosis.dto';// Importar el DTO de dosis
 
@@ -27,6 +27,10 @@ export class UpdateMedicamentoDto {
   @IsInt()
   readonly unidades_restantes?: number;
 
+  @IsOptional()
+  @IsInt()
+  @Min(0, { message: 'El valor de unidades mínimas debe ser mayor o igual a 0' })
+  readonly unidades_min?: number; // Nuevo campo para controlar el stock mínimo
   @IsOptional()
   @IsArray()
   @ValidateNested({ each: true })

@@ -16,6 +16,10 @@ export class Dosis {
   @Column()
   hora_dosis: string; // ej. "08:00", "14:00"
 
+  @Column()
+  cantidadP: number; // Cantidad de pastillas tomadas
 
+  @Column({ default: false })
+  suministrada: boolean; // Si se ha suministrado la dosis
 
 }

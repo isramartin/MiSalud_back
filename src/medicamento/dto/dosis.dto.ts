@@ -1,4 +1,4 @@
-import { IsString, IsInt } from 'class-validator';
+import { IsString, IsInt, IsBoolean } from 'class-validator';
 
 export class CreateDosisDto {
   @IsInt()
@@ -9,5 +9,10 @@ export class CreateDosisDto {
 
   @IsString()
   momento_comida: string; // Ej. "antes", "durante", "después"
+  
+  @IsInt()
+  cantidadP: number; // Cantidad de pastillas tomadas en esa dosis
 
+  @IsBoolean()
+  suministrada: boolean; // Si la dosis fue suministrada
 }

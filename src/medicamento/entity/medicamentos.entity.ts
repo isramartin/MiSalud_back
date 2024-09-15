@@ -24,6 +24,9 @@ export class Medicamento {
   @Column()
   unidades_restantes: number;
 
+  @Column({ nullable: false })
+  unidades_min: number; // Campo para las unidades mínimas
+
   @OneToMany(() => Dosis, dosis => dosis.medicamento, { cascade: true })
   dosis: Dosis[];
 }
