@@ -73,67 +73,26 @@ export class MedicamentoService {
     return medicamento;
   }
 
-//   antiguo update
-//   async actualizarMedicamento(id: number, updateMedicamentoDto: UpdateMedicamentoDto): Promise<Medicamento> {
-//     const medicamento = await this.medicamentoRepository.findOne({ where: { id } });
-
-//     if (!medicamento) {
-//       throw new NotFoundException(`Medicamento con ID ${id} no encontrado`);
-//     }
-
-//     Object.assign(medicamento, updateMedicamentoDto);
-//     return this.medicamentoRepository.save(medicamento);
-//   }
-
 //aqui el nuvo update 
 async actualizarMedicamento(id: number, updateMedicamentoDto: UpdateMedicamentoDto): Promise<Medicamento> {
-    const medicamento = await this.medicamentoRepository.findOne({ where: { id }, relations: ['dosis'] });
+    console.log(`Actualizando medicamento con ID: ${id}`);
+  
+    const medicamento = await this.medicamentoRepository.findOne({ where: { id } });
   
     if (!medicamento) {
+      console.error(`Medicamento con ID ${id} no encontrado`);
       throw new NotFoundException(`Medicamento con ID ${id} no encontrado`);
     }
   
-    // Actualizar propiedades del medicamento
+    console.log(`Medicamento encontrado:`, medicamento);
     Object.assign(medicamento, updateMedicamentoDto);
   
-    // Procesar dosis actualizadas
-    if (updateMedicamentoDto.dosis) {
-      updateMedicamentoDto.dosis.forEach(dosisDto => {
-        const dosisExistente = medicamento.dosis.find(d => d.numero_dosis === dosisDto.numero_dosis && d.hora_dosis === dosisDto.hora_dosis);
+    const resultado = await this.medicamentoRepository.save(medicamento);
+    console.log(`Medicamento actualizado:`, resultado);
   
-        if (dosisExistente) {
-          // Si la dosis existe y es suministrada, actualizamos la cantidad de pastillas
-          if (dosisDto.suministrada && !dosisExistente.suministrada) {
-            medicamento.unidades_restantes -= dosisDto.cantidadP;
-  
-            // Actualizar el estado de la dosis existente
-            dosisExistente.suministrada = dosisDto.suministrada;
-            dosisExistente.cantidadP = dosisDto.cantidadP;
-          }
-        } else {
-          // Si la dosis no existe, crearla
-          const nuevaDosis = this.dosisRepository.create({
-            ...dosisDto,
-            medicamento: medicamento,
-          });
-          this.dosisRepository.save(nuevaDosis);
-        }
-      });
-    }
-  
-    // Comprobar si unidades_restantes es menor o igual a unidades_min
-    if (medicamento.unidades_restantes <= medicamento.unidades_min) {
-      // Enviar notificación (no implementado por ahora)
-      // this.enviarNotificacion(
-      //   `Las unidades restantes (${medicamento.unidades_restantes}) del medicamento ${medicamento.nombre} están por debajo o igual al mínimo (${medicamento.unidades_min}).`
-      // );
-    }
-  
-    // Guardar los cambios en la base de datos
-    return this.medicamentoRepository.save(medicamento);
+    return resultado;
   }
   
-//aqui termina nuevo update
 
   async eliminarMedicamento(id: number): Promise<void> {
     if (!id) {

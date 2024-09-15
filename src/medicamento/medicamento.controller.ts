@@ -32,7 +32,7 @@ export class MedicamentoController {
   }
 
   @Put('update')
-  async actualizarMedicamento(@Param('id') id: number, @Body() medicamentoData: UpdateMedicamentoDto) {
+  async actualizarMedicamento(@Query('id') id: number, @Body() medicamentoData: UpdateMedicamentoDto) {
     try {
       return await this.medicamentoService.actualizarMedicamento(id, medicamentoData);
     } catch (error) {
