@@ -36,6 +36,7 @@ jobs:
         env:
           API_VERSION: v1
           CI: true
+          DB_PORT: 5432
           DB_HOST: dpg-crmdqq68ii6s73ao0u2g-a.oregon-postgres.render.com
           DB_NAME: misalud_ntq6
           DB_PASSWORD: PmyLEXf5xNQXEYrhZhbB5hXFA71ncqpd

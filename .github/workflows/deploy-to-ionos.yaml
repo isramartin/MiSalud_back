@@ -16,8 +16,8 @@ on:
       branch-id:
         required: true
         type: string
-      deployment-ids:
-        require: true
+       deployment-ids:
+        required: true
         type: string
   push:
     path:
