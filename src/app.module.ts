@@ -10,7 +10,7 @@ import { AgendaModule } from './agenda/agenda.module';
 import { CitaModule } from './cita/cita.module';
 import { User } from './users/entity/user.entity';
 import { Auth } from './auth/entity/auth.entity';
-import { Agenda } from './agenda/entity/agenda.entity'; 
+import { Agenda } from './agenda/entity/agenda.entity';
 import { Cita } from './cita/entity/cita.entity';
 import { Medicamento } from './medicamento/entity/medicamentos.entity';
 import { Dosis } from './medicamento/entity/dosis.entity';
@@ -22,12 +22,17 @@ import { Dosis } from './medicamento/entity/dosis.entity';
     TypeOrmModule.forRoot({
       type: 'postgres',
       host: process.env.DB_HOST,
-      port: +process.env.DB_PORT,
+      port: +process.env.DB_PORT || 5432,
       username: process.env.DB_USER,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
+      // entities: [__dirname + '/**/*.entity{.ts,.js}'],
       entities: [User, Auth, Agenda, Cita, Medicamento, Dosis], // Incluye todas tus entidades aquí
+      ssl: {
+        rejectUnauthorized: false, // Esto permite conexiones con certificados autofirmados o no verificados
+      },
       synchronize: true, // Solo en desarrollo
+      autoLoadEntities: true,
     }),
     UsersModule,
     AuthModule,
