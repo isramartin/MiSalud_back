@@ -36,14 +36,16 @@ jobs:
         env:
           API_VERSION: v1
           CI: true
-          DB_PORT: 5432
           DB_HOST: dpg-crmdqq68ii6s73ao0u2g-a.oregon-postgres.render.com
           DB_NAME: misalud_ntq6
           DB_PASSWORD: PmyLEXf5xNQXEYrhZhbB5hXFA71ncqpd
+          DB_PORT: 5432
           DB_USER: misalud_ntq6_user
           JWT_SECRET: Ap&mI$@lU_!8v6*QZ@Xe1Wo+Tjf7
           SITE_URL: ${{ inputs.site-url }}
-        run: npm run start:dev
+        run: |
+          npm install
+          npm run start:dev
 
       - name: Setup Node
         uses: actions/setup-node@v4
@@ -62,7 +64,7 @@ jobs:
         with:
           api-key: ${{ secrets.IONOS_API_KEY }}
           service-host: api-us.ionos.space
-          project-id: 49815f45-86a0-466c-99a0-0c0a0f852180
+          project-id: 97ae1370-373f-433e-a2ae-68f73ac91f15
           branch-id: ${{ inputs.branch-id }}
           version: ${{ github.sha }}
           folder: ${{ env.DEPLOYMENT_FOLDER }}
