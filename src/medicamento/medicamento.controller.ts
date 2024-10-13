@@ -1,8 +1,20 @@
-import { Controller, Get, Post, Body, Param, Put, Delete, NotFoundException, BadRequestException, Query, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Param,
+  Put,
+  Delete,
+  NotFoundException,
+  BadRequestException,
+  Query,
+  UseGuards,
+} from '@nestjs/common';
 import { MedicamentoService } from './medicamento.service';
 import { CreateMedicamentoDto } from './dto/medicamento.dto';
 import { UpdateMedicamentoDto } from './dto/updateMediacamneto.dto';
-import { JwtAuthGuard } from 'guards/jwt-auth.guard';
+import { JwtAuthGuard } from 'src/guards/jwt-auth.guard';
 
 @Controller('medicamentos')
 export class MedicamentoController {
@@ -29,7 +41,7 @@ export class MedicamentoController {
       throw new NotFoundException(`Medicamento con ID ${id} no encontrado`);
     }
   }
-  
+
   @UseGuards(JwtAuthGuard)
   @Get('dosis')
   async findOneMedicamentoPorId(@Query('id') id: number) {
@@ -38,9 +50,15 @@ export class MedicamentoController {
 
   @UseGuards(JwtAuthGuard)
   @Put('update')
-  async actualizarMedicamento(@Query('id') id: number, @Body() medicamentoData: UpdateMedicamentoDto) {
+  async actualizarMedicamento(
+    @Query('id') id: number,
+    @Body() medicamentoData: UpdateMedicamentoDto,
+  ) {
     try {
-      return await this.medicamentoService.actualizarMedicamento(id, medicamentoData);
+      return await this.medicamentoService.actualizarMedicamento(
+        id,
+        medicamentoData,
+      );
     } catch (error) {
       throw new NotFoundException(`Medicamento con ID ${id} no encontrado`);
     }

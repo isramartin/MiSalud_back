@@ -1,8 +1,14 @@
-import { Controller, Post, Body, Request, UseGuards, UnauthorizedException } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  Request,
+  UseGuards,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { JwtAuthGuard } from '../../guards/jwt-auth.guard'; // Importa el guard de JWT
+import { JwtAuthGuard } from '../guards/jwt-auth.guard'; // Importa el guard de JWT
 import { AuthDto } from './dto/auth.dto'; // DTO para la autenticación
-
 
 @Controller('auth')
 export class AuthController {
@@ -18,7 +24,7 @@ export class AuthController {
     return this.authService.login(user);
   }
 
-  @UseGuards(JwtAuthGuard)  // Protege la ruta con el guard JWT
+  @UseGuards(JwtAuthGuard) // Protege la ruta con el guard JWT
   @Post('protected')
   getProtected(@Request() req) {
     return req.user; // Retorna la información del usuario del token JWT

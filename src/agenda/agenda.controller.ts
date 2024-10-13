@@ -1,9 +1,18 @@
-import { Controller, Get, Post, Body, Param, Put, Delete, Query, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Param,
+  Put,
+  Delete,
+  Query,
+  UseGuards,
+} from '@nestjs/common';
 import { AgendaService } from './agenda.service';
 import { CreateAgendaDto } from './dto/createAgenda.dto';
 import { Agenda } from './entity/agenda.entity';
-import { JwtAuthGuard } from 'guards/jwt-auth.guard'; // Importa el guard de JWT
-
+import { JwtAuthGuard } from 'src/guards/jwt-auth.guard'; // Importa el guard de JWT
 
 @Controller('agenda')
 export class AgendaController {
@@ -25,10 +34,13 @@ export class AgendaController {
   async findByName(@Query('nombre') nombre: string): Promise<Agenda[]> {
     return this.agendaService.findByName(nombre);
   }
-  
+
   @UseGuards(JwtAuthGuard) // Protege esta ruta con el guard de JWT
   @Put('update')
-  async update(@Param('id') id: number, @Body() updateAgendaDto: CreateAgendaDto): Promise<Agenda> {
+  async update(
+    @Param('id') id: number,
+    @Body() updateAgendaDto: CreateAgendaDto,
+  ): Promise<Agenda> {
     return this.agendaService.update(id, updateAgendaDto);
   }
 
