@@ -1,22 +1,26 @@
-import { Controller, Get, Post, Body, Param, Put, Delete, NotFoundException, BadRequestException, Query } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Put, Delete, NotFoundException, BadRequestException, Query, UseGuards } from '@nestjs/common';
 import { MedicamentoService } from './medicamento.service';
 import { CreateMedicamentoDto } from './dto/medicamento.dto';
 import { UpdateMedicamentoDto } from './dto/updateMediacamneto.dto';
+import { JwtAuthGuard } from 'guards/jwt-auth.guard';
 
 @Controller('medicamentos')
 export class MedicamentoController {
   constructor(private readonly medicamentoService: MedicamentoService) {}
 
+  @UseGuards(JwtAuthGuard)
   @Post()
   async crearMedicamento(@Body() medicamentodto: CreateMedicamentoDto) {
     return this.medicamentoService.crearMedicamento(medicamentodto);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Get()
   async findAllMedicamentos() {
     return this.medicamentoService.obtenerMedicamentos();
   }
 
+  @UseGuards(JwtAuthGuard)
   @Get('empaque')
   async findOneMedicamentoSimplePorId(@Query('id') id: number) {
     try {
@@ -26,11 +30,13 @@ export class MedicamentoController {
     }
   }
   
+  @UseGuards(JwtAuthGuard)
   @Get('dosis')
   async findOneMedicamentoPorId(@Query('id') id: number) {
     return this.medicamentoService.obtenerMedicamentoPorId(id);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Put('update')
   async actualizarMedicamento(@Query('id') id: number, @Body() medicamentoData: UpdateMedicamentoDto) {
     try {
@@ -40,6 +46,7 @@ export class MedicamentoController {
     }
   }
 
+  @UseGuards(JwtAuthGuard)
   @Delete('delete')
   async delete(@Query('id') id: number) {
     if (!id) {
