@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Agenda } from './entity/agenda.entity';
@@ -20,9 +20,16 @@ export class AgendaService {
     return this.agendaRepository.find();
   }
 
-  async findByName(nombre: string): Promise<Agenda[]> {
-    return this.agendaRepository.find({ where: { nombre } });
+  async findById(id: number): Promise<Agenda> {
+    const agenda = await this.agendaRepository.findOne({ where: { id } });
+    console.log('Agenda Found:', agenda); // Agregar esta línea para depuración
+    if (!agenda) {
+      throw new NotFoundException(`No se encontró una agenda con el id ${id}`);
+    }
+    return agenda;
   }
+  
+  
 
   async findOne(id: number): Promise<Agenda> {
     const agenda = await this.agendaRepository.findOne({ where: { id } });

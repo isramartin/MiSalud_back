@@ -1,4 +1,4 @@
-import { Controller,Get, Post, Body, Param, Put, Delete, Query, UseGuards } from '@nestjs/common';
+import { Controller,Get, Post, Body, Param, Put, Delete, Query, UseGuards, BadRequestException } from '@nestjs/common';
 import { CitaService } from './cita.service';
 import { CreateCitaDto } from './dto/createCita.dto';
 import { Cita } from './entity/cita.entity';
@@ -21,9 +21,13 @@ export class CitaController {
 	}
 
 	@UseGuards(JwtAuthGuard) // Protege esta ruta con el guard de JWT
-	@Get('search')
-	async findByName(@Query('nombre_cita') nombre_cita: string): Promise<Cita[]>{
-		return this.citaService.findByName(nombre_cita);
+	@Get('view')
+	async findById(@Query('id') id: number): Promise<Cita> {
+	  console.log('Received ID:', id); // Agregar esta línea para depuración
+	  if (!id) {
+		throw new BadRequestException('Debe proporcionar un id para buscar.');
+	  }
+	  return this.citaService.findById(id);
 	}
 
 	@UseGuards(JwtAuthGuard) // Protege esta ruta con el guard de JWT

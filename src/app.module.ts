@@ -14,6 +14,7 @@ import { Agenda } from './agenda/entity/agenda.entity';
 import { Cita } from './cita/entity/cita.entity';
 import { Medicamento } from './medicamento/entity/medicamentos.entity';
 import { Dosis } from './medicamento/entity/dosis.entity';
+import { MedicosModule } from './medicos/medicos.module';
 // Incluye la entidad aquí
 
 @Module({
@@ -39,6 +40,7 @@ import { Dosis } from './medicamento/entity/dosis.entity';
     MedicamentoModule,
     AgendaModule,
     CitaModule,
+    MedicosModule,
   ],
   controllers: [AppController],
   providers: [AppService],

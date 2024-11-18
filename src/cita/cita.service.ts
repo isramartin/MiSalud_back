@@ -20,9 +20,14 @@ export class CitaService {
 		return this.citaRepository.find();
 	}
 
-	async findByName(nombre_cita: string): Promise<Cita[]>{
-		return this.citaRepository.find({where: { nombre_cita } });
-	}
+	async findById(id: number): Promise<Cita> {
+		const agenda = await this.citaRepository.findOne({ where: { id } });
+		console.log('Agenda Found:', Cita); // Agregar esta línea para depuración
+		if (!agenda) {
+		  throw new NotFoundException(`No se encontró una agenda con el id ${id}`);
+		}
+		return agenda;
+	  }
 
 	async findOne(id: number): Promise<Cita> {
     const cita = await this.citaRepository.findOne({ where: { id } });
