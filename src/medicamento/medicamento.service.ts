@@ -9,6 +9,7 @@ import { Medicamento } from './entity/medicamentos.entity';
 import { Dosis } from './entity/dosis.entity';
 import { CreateMedicamentoDto } from './dto/medicamento.dto';
 import { UpdateMedicamentoDto } from './dto/updateMediacamneto.dto';
+import { User } from 'src/users/entity/user.entity';
 
 @Injectable()
 export class MedicamentoService {
@@ -17,57 +18,54 @@ export class MedicamentoService {
     private medicamentoRepository: Repository<Medicamento>,
     @InjectRepository(Dosis)
     private dosisRepository: Repository<Dosis>,
+    @InjectRepository(User)
+    private userRepository: Repository<User>,
   ) {}
 
   async crearMedicamento(
     createMedicamentoDto: CreateMedicamentoDto,
+    userId: number,
   ): Promise<Medicamento> {
-    const {
-      nombre,
-      unidad,
-      frecuencia,
-      numero_dosis,
-      total_unidades,
-      unidades_restantes,
-      unidades_min,
-      dosis,
-    } = createMedicamentoDto;
-
-    // Crear la entidad de medicamento
+    const user = await this.userRepository.findOne({ where: { id: userId } });
+    if (!user) {
+      throw new NotFoundException('El usuario no existe');
+    }
+  
+    // Crear el medicamento utilizando el DTO completo
     const medicamento = this.medicamentoRepository.create({
-      nombre,
-      unidad,
-      frecuencia,
-      numero_dosis,
-      total_unidades,
-      unidades_restantes,
-      unidades_min,
+      ...createMedicamentoDto,
+      user,
     });
-
+  
     const savedMedicamento = await this.medicamentoRepository.save(medicamento);
-
-    // Procesar las dosis y asignar `suministrada` como `false` por defecto si no se proporciona
-    if (dosis && dosis.length > 0) {
-      const dosisArray = dosis.map((dosisItem) =>
+  
+    // Guardar las dosis asociadas
+    if (createMedicamentoDto.dosis && createMedicamentoDto.dosis.length > 0) {
+      const dosisArray = createMedicamentoDto.dosis.map((dosisItem, index) =>
         this.dosisRepository.create({
           ...dosisItem,
+          numero_dosis: index + 1, // Generar numero_dosis automáticamente
           medicamento: savedMedicamento,
-          suministrada: dosisItem.suministrada ?? false, // Establecer `suministrada` a `false` si es `undefined`
         }),
       );
+  
       await this.dosisRepository.save(dosisArray);
     }
-
+  
     return savedMedicamento;
   }
+  
 
-  async obtenerMedicamentos(): Promise<Medicamento[]> {
-    return this.medicamentoRepository.find({ relations: ['dosis'] });
+  async obtenerMedicamentos(userId: number): Promise<Medicamento[]> {
+    return this.medicamentoRepository.find({
+      where: { user: { id: userId } },
+      relations: ['dosis'],
+    });
   }
 
-  async obtenerMedicamentoPorId(id: number): Promise<Medicamento> {
+  async obtenerMedicamento(id: number, userId: number): Promise<Medicamento> {
     const medicamento = await this.medicamentoRepository.findOne({
-      where: { id },
+      where: { id, user: { id: userId } },
       relations: ['dosis'],
     });
 
@@ -78,9 +76,9 @@ export class MedicamentoService {
     return medicamento;
   }
 
-  async obtenerMedicamentoSimplePorId(id: number): Promise<Medicamento> {
+  async obtenerMedicamentoSimple(id: number, userId: number): Promise<Medicamento> {
     const medicamento = await this.medicamentoRepository.findOne({
-      where: { id },
+      where: { id, user: { id: userId } },
     });
 
     if (!medicamento) {
@@ -90,21 +88,23 @@ export class MedicamentoService {
     return medicamento;
   }
 
-  //aqui el nuvo update
   async actualizarMedicamento(
     id: number,
     updateMedicamentoDto: UpdateMedicamentoDto,
+    userId: number,
   ): Promise<Medicamento> {
     console.log(`Actualizando medicamento con ID: ${id}`);
   
     const medicamento = await this.medicamentoRepository.findOne({
-      where: { id },
+      where: { id, user: { id: userId } }, // Filtra por ID de usuario
       relations: ['dosis'],
     });
   
     if (!medicamento) {
-      console.error(`Medicamento con ID ${id} no encontrado`);
-      throw new NotFoundException(`Medicamento con ID ${id} no encontrado`);
+      console.error(`Medicamento con ID ${id} no encontrado o no pertenece al usuario`);
+      throw new NotFoundException(
+        `Medicamento con ID ${id} no encontrado o no pertenece al usuario`,
+      );
     }
   
     // Actualizar propiedades del medicamento
@@ -147,8 +147,10 @@ export class MedicamentoService {
   
     // Comprobar si unidades_restantes es menor o igual a unidades_min
     if (medicamento.unidades_restantes <= medicamento.unidades_min) {
-        console.log(`ALERTA: Las unidades restantes (${medicamento.unidades_restantes}) son menores o iguales al mínimo (${medicamento.unidades_min}).`);
-      // Aqui se agrega enviar notificacion
+      console.log(
+        `ALERTA: Las unidades restantes (${medicamento.unidades_restantes}) son menores o iguales al mínimo (${medicamento.unidades_min}).`,
+      );
+      // Aquí se agrega enviar notificación
     }
   
     // Guardar los cambios en la base de datos
@@ -156,28 +158,14 @@ export class MedicamentoService {
     console.log(`Medicamento después de guardar:`, updatedMedicamento);
     return updatedMedicamento;
   }
+  
 
-  async eliminarMedicamento(id: number): Promise<void> {
-    if (!id) {
-      throw new BadRequestException('ID del medicamento no proporcionado');
-    }
+  async eliminarMedicamento(id: number, userId: number): Promise<{ message: string }> {
+    const medicamento = await this.obtenerMedicamento(id, userId);
 
-    const medicamento = await this.medicamentoRepository.findOne({
-      where: { id },
-    });
-    if (!medicamento) {
-      throw new NotFoundException(`Medicamento con ID ${id} no encontrado`);
-    }
+    await this.dosisRepository.delete({ medicamento: { id } });
+    await this.medicamentoRepository.remove(medicamento);
 
-    try {
-      // Elimina las dosis asociadas
-      await this.dosisRepository.delete({ medicamento: { id } });
-      // Luego elimina el medicamento
-      await this.medicamentoRepository.delete(id);
-    } catch (error) {
-      throw new BadRequestException(
-        'No se pudo eliminar el medicamento. Puede estar siendo utilizado.',
-      );
-    }
+    return { message: 'Medicamento eliminado correctamente' };
   }
 }

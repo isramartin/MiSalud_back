@@ -1,5 +1,6 @@
-import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, OneToMany, ManyToOne } from 'typeorm';
 import { Dosis } from './dosis.entity';
+import { User } from 'src/users/entity/user.entity';
 
 @Entity('medicamento')
 export class Medicamento {
@@ -29,4 +30,7 @@ export class Medicamento {
 
   @OneToMany(() => Dosis, dosis => dosis.medicamento, { cascade: true })
   dosis: Dosis[];
+
+  @ManyToOne(() => User, (user) => user.medicamento, { onDelete: 'CASCADE' }) // Relación con User
+	user: User;
 }

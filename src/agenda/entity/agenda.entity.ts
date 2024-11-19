@@ -1,4 +1,5 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { User } from 'src/users/entity/user.entity';
+import { Entity, Column, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
 
 @Entity('agenda')
 export class Agenda {
@@ -16,4 +17,7 @@ export class Agenda {
 
   @Column({ type: 'varchar', length: 100 }) 
   tipo: string;
+
+  @ManyToOne(() => User, (user) => user.agenda, { onDelete: 'CASCADE' }) // Relación con User
+  user: User;
 }

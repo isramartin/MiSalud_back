@@ -1,4 +1,5 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { User } from 'src/users/entity/user.entity';
+import { Entity, Column, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
 
 @Entity('cita')
 export class Cita{
@@ -19,4 +20,7 @@ export class Cita{
 
 	@Column({	type:'varchar', length: 100	})
 	notas: string;
+
+	@ManyToOne(() => User, (user) => user.cita, { onDelete: 'CASCADE' }) // Relación con User
+	user: User;
 }

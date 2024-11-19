@@ -3,11 +3,11 @@ import {
   Get,
   Post,
   Body,
-  Param,
-  Put,
-  Delete,
   Query,
   UseGuards,
+  Put,
+  Delete,
+  Request,
   BadRequestException,
 } from '@nestjs/common';
 import { AgendaService } from './agenda.service';
@@ -19,39 +19,48 @@ import { JwtAuthGuard } from 'guards/jwt-auth.guard'; // Importa el guard de JWT
 export class AgendaController {
   constructor(private readonly agendaService: AgendaService) {}
 
+  @UseGuards(JwtAuthGuard)
   @Post()
-  async create(@Body() createAgendaDto: CreateAgendaDto): Promise<Agenda> {
-    return this.agendaService.create(createAgendaDto);
+  async create(
+    @Body() createAgendaDto: CreateAgendaDto,
+    @Request() req,
+  ): Promise<Agenda> {
+    const userId = req.user.id; // Obtiene el ID del usuario logueado
+    return this.agendaService.create(createAgendaDto, userId);
   }
 
-  @UseGuards(JwtAuthGuard) // Protege esta ruta con el guard de JWT
+  @UseGuards(JwtAuthGuard)
   @Get()
-  async findAll(): Promise<Agenda[]> {
-    return this.agendaService.findAll();
+  async findAll(@Request() req): Promise<Agenda[]> {
+    const userId = req.user.id;
+    return this.agendaService.findAll(userId);
   }
 
-  @UseGuards(JwtAuthGuard) // Protege esta ruta con el guard de JWT
+  @UseGuards(JwtAuthGuard)
   @Get('view')
-  async findById(@Query('id') id: number): Promise<Agenda> {
-    console.log('Received ID:', id); // Agregar esta línea para depuración
+  async findById(@Query('id') id: number, @Request() req): Promise<Agenda> {
     if (!id) {
       throw new BadRequestException('Debe proporcionar un id para buscar.');
     }
-    return this.agendaService.findById(id);
+    const userId = req.user.id;
+    return this.agendaService.findById(id, userId);
   }
 
-  @UseGuards(JwtAuthGuard) // Protege esta ruta con el guard de JWT
+  @UseGuards(JwtAuthGuard)
   @Put('update')
   async update(
-    @Param('id') id: number,
+    @Query('id') id: number,
     @Body() updateAgendaDto: CreateAgendaDto,
+    @Request() req,
   ): Promise<Agenda> {
-    return this.agendaService.update(id, updateAgendaDto);
+    const userId = req.user.id;
+    return this.agendaService.update(id, updateAgendaDto, userId);
   }
 
-  @UseGuards(JwtAuthGuard) // Protege esta ruta con el guard de JWT
+  @UseGuards(JwtAuthGuard)
   @Delete('delete')
-  async remove(@Query('id') id: number): Promise<string> {
-    return this.agendaService.remove(id);
+  async remove(@Query('id') id: number, @Request() req): Promise<{ message: string }> {
+    const userId = req.user.id;
+    return this.agendaService.remove(id, userId);
   }
 }

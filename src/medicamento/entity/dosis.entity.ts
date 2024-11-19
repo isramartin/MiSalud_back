@@ -1,5 +1,6 @@
 import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, JoinColumn } from 'typeorm';
 import { Medicamento } from './medicamentos.entity';
+import { User } from 'src/users/entity/user.entity';
 
 @Entity('dosis')
 export class Dosis {
@@ -22,4 +23,6 @@ export class Dosis {
   @Column({ default: false })
   suministrada: boolean; // Si se ha suministrado la dosis
 
+  // @ManyToOne(() => User, (user) => user.dosis, { onDelete: 'CASCADE' }) // Relación con User
+	// user: User;
 }
