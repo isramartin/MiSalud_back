@@ -9,6 +9,7 @@ import {
   Delete,
   Request,
   BadRequestException,
+  NotFoundException,
 } from '@nestjs/common';
 import { AgendaService } from './agenda.service';
 import { CreateAgendaDto } from './dto/createAgenda.dto';
@@ -33,7 +34,13 @@ export class AgendaController {
   @Get()
   async findAll(@Request() req): Promise<Agenda[]> {
     const userId = req.user.id;
-    return this.agendaService.findAll(userId);
+    const agendas = await this.agendaService.findAll(userId);
+  
+    if (agendas.length === 0) {
+      throw new NotFoundException('El usuario no ha registrado ningún dato.');
+    }
+  
+    return agendas;
   }
 
   @UseGuards(JwtAuthGuard)
