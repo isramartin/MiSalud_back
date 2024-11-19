@@ -1,4 +1,5 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
+import { User } from 'src/users/entity/user.entity';
 
 @Entity('medicos')
 export class Medico {
@@ -22,4 +23,7 @@ export class Medico {
 
   @Column({ type: 'text', nullable: true })
   direccion: string;
+
+  @ManyToOne(() => User, (user) => user.medicos, { onDelete: 'CASCADE' }) // Relación con User
+  user: User;
 }

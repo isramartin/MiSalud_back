@@ -19,7 +19,9 @@ import { MedicosModule } from './medicos/medicos.module';
 
 @Module({
   imports: [
-    ConfigModule.forRoot(), // Carga las variables de entorno desde el archivo .env
+    ConfigModule.forRoot({
+      isGlobal: true, // Hace que el módulo de configuración esté disponible globalmente
+    }), // Carga las variables de entorno desde el archivo .env
     TypeOrmModule.forRoot({
       type: 'postgres',
       host: process.env.DB_HOST,

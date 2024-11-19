@@ -1,4 +1,6 @@
 export interface JwtPayload {
-    sub: number;
-    username: string;
-  }
+  sub: number; // userId
+  username: string;
+  iat?: number; // Opcional: Emitido en
+  exp?: number; // Opcional: Expiración
+}
