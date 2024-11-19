@@ -31,29 +31,20 @@ export class MedicamentoService {
       throw new NotFoundException('El usuario no existe');
     }
   
-    // Crear el medicamento utilizando el DTO completo
+    // Asocia las dosis al medicamento directamente usando cascade
     const medicamento = this.medicamentoRepository.create({
       ...createMedicamentoDto,
       user,
+      dosis: createMedicamentoDto.dosis.map((dosisItem, index) => ({
+        ...dosisItem,
+        numero_dosis: index + 1, // Generar numero_dosis automáticamente
+      })),
     });
   
-    const savedMedicamento = await this.medicamentoRepository.save(medicamento);
-  
-    // Guardar las dosis asociadas
-    if (createMedicamentoDto.dosis && createMedicamentoDto.dosis.length > 0) {
-      const dosisArray = createMedicamentoDto.dosis.map((dosisItem, index) =>
-        this.dosisRepository.create({
-          ...dosisItem,
-          numero_dosis: index + 1, // Generar numero_dosis automáticamente
-          medicamento: savedMedicamento,
-        }),
-      );
-  
-      await this.dosisRepository.save(dosisArray);
-    }
-  
-    return savedMedicamento;
+    return this.medicamentoRepository.save(medicamento); // cascade guardará las dosis automáticamente
   }
+  
+  
   
 
   async obtenerMedicamentos(userId: number): Promise<Medicamento[]> {
