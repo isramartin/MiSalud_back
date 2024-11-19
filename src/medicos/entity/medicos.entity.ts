@@ -1,7 +1,8 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, Unique } from 'typeorm';
 import { User } from 'src/users/entity/user.entity';
 
 @Entity('medicos')
+@Unique(['email', 'user'])
 export class Medico {
   @PrimaryGeneratedColumn()
   id: number;
@@ -9,7 +10,7 @@ export class Medico {
   @Column({ type: 'varchar', length: 100 })
   nombre: string;
 
-  @Column({ type: 'varchar', length: 100, unique: true })
+  @Column({ type: 'varchar', length: 100 })
   email: string;
 
   @Column({ type: 'varchar', length: 15, nullable: true })
