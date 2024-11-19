@@ -1,4 +1,4 @@
-import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Medico } from './entity/medicos.entity';
@@ -17,20 +17,22 @@ export class MedicosService {
   ) {}
 
   async create(createMedicoDto: MedicoDto, userId: number): Promise<Medico> {
-   
+    // Verifica que el usuario exista
     const user = await this.userRepository.findOne({ where: { id: userId } });
     if (!user) {
-      throw new NotFoundException('El usuario no existe');
+      throw new NotFoundException(`Usuario con ID ${userId} no encontrado`);
     }
   
+    // Busca si ya existe un médico con el mismo email
     const existingMedico = await this.medicoRepository.findOne({
       where: { email: createMedicoDto.email, user: { id: userId } },
       relations: ['user'],
     });
-  
+    
     if (existingMedico) {
-      throw new ConflictException('El correo ya está en uso para este usuario');
+      throw new ConflictException('El correo ya está registrado para este usuario');
     }
+    
   
     // Crea el médico asociado al usuario
     const medico = this.medicoRepository.create({
@@ -40,6 +42,9 @@ export class MedicosService {
   
     return this.medicoRepository.save(medico);
   }
+  
+  
+  
   
 
   async findAll(userId: number): Promise<Medico[]> {
