@@ -1,6 +1,7 @@
 import { IsString, IsInt, IsOptional, IsArray, ValidateNested, Min } from 'class-validator';
 import { Type } from 'class-transformer';
 import { CreateDosisDto } from './dosis.dto';// Importar el DTO de dosis
+import { updateDosisDto } from './updateDosis.dto';
 
 export class UpdateMedicamentoDto {
   @IsOptional()
@@ -34,6 +35,6 @@ export class UpdateMedicamentoDto {
   @IsOptional()
   @IsArray()
   @ValidateNested({ each: true })
-  @Type(() => CreateDosisDto) // Transformar cada item en un objeto CreateDosisDto
-  readonly dosis?: CreateDosisDto[];
+  @Type(() => updateDosisDto) // Transformar cada item en un objeto CreateDosisDto
+  readonly dosis?: updateDosisDto[];
 }

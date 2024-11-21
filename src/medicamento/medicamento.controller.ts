@@ -46,10 +46,17 @@ export class MedicamentoController {
   }
   
   @UseGuards(JwtAuthGuard)
-  @Get('dosis')
+  @Get('dosis/one')
   async findOneMedicamentoPorId(@Query('id') id: number, @Request() req) {
     const userId = req.user.id;
     return this.medicamentoService.obtenerMedicamento(id, userId);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('dosis')
+  async findDosisPorMedicamentoId(@Query('id') id: number, @Request() req) {
+    const userId = req.user.id;
+    return this.medicamentoService.obtenerDosis(id, userId);
   }
 
   @UseGuards(JwtAuthGuard)

@@ -54,16 +54,30 @@ export class MedicamentoService {
     });
   }
 
+  async obtenerDosis(id: number, userId: number): Promise<Dosis[]> {
+    const medicamento = await this.medicamentoRepository.findOne({
+      where: { id, user: { id: userId } },
+      relations: ['dosis'],
+    });
+  
+    if (!medicamento) {
+      throw new NotFoundException(`Medicamento con ID ${id} no encontrado`);
+    }
+  
+    // Devuelve las dosis sin realizar operaciones con medicamentoRepository
+    return medicamento.dosis;
+  }
+
   async obtenerMedicamento(id: number, userId: number): Promise<Medicamento> {
     const medicamento = await this.medicamentoRepository.findOne({
       where: { id, user: { id: userId } },
       relations: ['dosis'],
     });
-
+  
     if (!medicamento) {
       throw new NotFoundException(`Medicamento con ID ${id} no encontrado`);
     }
-
+  
     return medicamento;
   }
 
