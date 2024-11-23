@@ -24,20 +24,23 @@ import { MedicinasModule } from './medicinas/medicinas.module';
       isGlobal: true, // Hace que el módulo de configuración esté disponible globalmente
     }), // Carga las variables de entorno desde el archivo .env
     TypeOrmModule.forRoot({
-      type: 'postgres',
-      host: process.env.DB_HOST,
-      port: +process.env.DB_PORT || 5432,
-      username: process.env.DB_USER,
-      password: process.env.DB_PASSWORD,
-      database: process.env.DB_NAME,
-      entities: [__dirname + '/**/*.entity{.ts,.js}'],
-      // entities: [User, Auth, Agenda, Cita, Medicamento, Dosis], // Incluye todas tus entidades aquí
-      ssl: {
-        rejectUnauthorized: false, // Esto permite conexiones con certificados autofirmados o no verificados
-      },
-      synchronize: true, // Solo en desarrollo
-      autoLoadEntities: true,
-    }),
+  type: 'postgres',
+  host: process.env.DB_HOST,
+  port: +process.env.DB_PORT || 5432,
+  username: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_NAME,
+  entities: [__dirname + '/**/*.entity{.ts,.js}'],
+  synchronize: true,
+  autoLoadEntities: true,
+  ssl: process.env.DB_SSL === 'true' ? { rejectUnauthorized: false } : false,
+  extra: {
+    max: 10,
+    connectionTimeoutMillis: 30000,
+    idleTimeoutMillis: 30000,
+  },
+}),
+
     UsersModule,
     AuthModule,
     MedicamentoModule,

@@ -17,6 +17,9 @@ export class Dosis {
   @Column()
   hora_dosis: string; // ej. "08:00", "14:00"
 
+  @Column({ default: 'desconocido' }) // Valor por defecto para evitar null
+  momento_comida: string;
+
   @Column()
   cantidadP: number; // Cantidad de pastillas tomadas
 

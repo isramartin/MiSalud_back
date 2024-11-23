@@ -9,9 +9,9 @@ export class updateDosisDto {
   @IsString()
   hora_dosis: string; // Ej. "08:00", "14:00"
 
-  // @IsOptional()
-  // @IsString()
-  // momento_comida: string; // Ej. "antes", "durante", "después"
+  @IsOptional()
+  @IsString()
+  momento_comida: string; // Ej. "antes", "durante", "después"
   
   @IsOptional()
   @IsInt()
